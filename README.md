@@ -32,7 +32,7 @@ Supports **Wi-Fi** and **SIMcom A7680C-class** cellular (PPP), plus **BN-880** G
 |---------|----------------|
 | **PubSubClient** | Always |
 | **ArduinoJson** | Hub no-code / gateway / Modbus runtime |
-| **eModbus** | Modbus RTU |
+| **eModbus** | Modbus RTU (GitHub `eModbus/eModbus` - not in Library Manager) |
 | **TinyGPSPlus** | GPS examples only |
 
 ---

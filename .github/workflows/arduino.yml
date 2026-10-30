@@ -51,4 +51,4 @@ jobs:
             - name: PubSubClient
             - name: ArduinoJson
             - name: TinyGPSPlus
-            - name: eModbus
+            - source-url: https://github.com/eModbus/eModbus.git
