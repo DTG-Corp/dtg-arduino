@@ -24,7 +24,7 @@ jobs:
       matrix:
         fqbn:
           - esp32:esp32:esp32
-          - esp32:esp32:esp32c3
+          - esp32:esp32:esp32c3:PartitionScheme=huge_app
     steps:
       - uses: actions/checkout@v4
       - uses: arduino/compile-sketches@v1

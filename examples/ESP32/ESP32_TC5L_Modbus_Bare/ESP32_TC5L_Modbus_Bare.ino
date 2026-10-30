@@ -2,7 +2,7 @@
  * @file ESP32_TC5L_Modbus_Bare.ino
  * @brief Standalone Modbus RTU bench sketch for TC5-L (no WiFi, MQTT, or dtg library).
  *
- * Purpose: isolate ESP32 + Serial2 + RS485-TTL module from the IoT Platform stack.
+ * Purpose: isolate ESP32 + UART (Serial2 on ESP32/S3, Serial1 on C3) + RS485-TTL module from the IoT Platform stack.
  * Open Serial Monitor @ 115200 and compare TX/RX hex with Modbus Poll.
  *
  * Wiring (UART2 - match your board; many bench setups need TX=25 RX=14):
@@ -18,6 +18,13 @@
  *   Swap MODBUS_RX_PIN / MODBUS_TX_PIN if TTL TX/RX are reversed
  */
 #include <Arduino.h>
+#include <HardwareSerial.h>
+
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S3
+#define MODBUS_SERIAL Serial2
+#else
+#define MODBUS_SERIAL Serial1
+#endif
 
 // ---------------------------------------------------------------------------
 // Compile-time test knobs
@@ -110,8 +117,8 @@ static void printHexLine(const char *prefix, const uint8_t *buf, size_t len) {
 }
 
 static void drainRx() {
-  while (Serial2.available())
-    (void)Serial2.read();
+  while (MODBUS_SERIAL.available())
+    (void)MODBUS_SERIAL.read();
 }
 
 static size_t buildReadHoldingRequest(uint8_t *out, uint8_t slave, uint16_t address,
@@ -147,8 +154,8 @@ static size_t readResponse(uint8_t *out, size_t maxLen, uint32_t timeoutMs) {
   size_t need = 0;
 
   while ((int32_t)(millis() - idleDeadline) < 0) {
-    while (Serial2.available() && count < maxLen) {
-      out[count++] = (uint8_t)Serial2.read();
+    while (MODBUS_SERIAL.available() && count < maxLen) {
+      out[count++] = (uint8_t)MODBUS_SERIAL.read();
       idleDeadline = millis() + 80;
       need = expectedModbusRtuLen(out, count);
     }
@@ -158,8 +165,8 @@ static size_t readResponse(uint8_t *out, size_t maxLen, uint32_t timeoutMs) {
   }
 
   uint32_t tailDeadline = millis() + 30;
-  while ((int32_t)(millis() - tailDeadline) < 0 && Serial2.available() && count < maxLen) {
-    out[count++] = (uint8_t)Serial2.read();
+  while ((int32_t)(millis() - tailDeadline) < 0 && MODBUS_SERIAL.available() && count < maxLen) {
+    out[count++] = (uint8_t)MODBUS_SERIAL.read();
     tailDeadline = millis() + 30;
   }
   return count;
@@ -231,8 +238,8 @@ static void pollRegister(uint16_t address) {
   Serial.println(tc5RegisterHint(address));
 
   printHexLine("TX: ", tx, txLen);
-  Serial2.write(tx, txLen);
-  Serial2.flush();
+  MODBUS_SERIAL.write(tx, txLen);
+  MODBUS_SERIAL.flush();
   delayMicroseconds(MODBUS_TURNAROUND_US);
 
   const size_t rxLen = readResponse(rx, kRxBufLen, MODBUS_RX_TIMEOUT_MS);
@@ -259,7 +266,7 @@ void setup() {
   Serial.begin(115200);
   delay(300);
 
-  Serial2.begin(MODBUS_BAUD, serialModeFromParity(), MODBUS_RX_PIN, MODBUS_TX_PIN);
+  MODBUS_SERIAL.begin(MODBUS_BAUD, serialModeFromParity(), MODBUS_RX_PIN, MODBUS_TX_PIN);
   drainRx();
 
   Serial.println();

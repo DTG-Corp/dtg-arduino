@@ -2,7 +2,8 @@
  * @file dtg_gps.h
  * @brief BN-880 / u-blox NMEA UART reader using TinyGPS++.
  *
- * Uses ESP32 HardwareSerial Serial2: connect module TX -> gpioRx, module RX -> gpioTx.
+ * UART: Serial2 on ESP32/S3 (3 UARTs), Serial1 on C3/C6/S2. Connect module TX -> gpioRx,
+ * module RX -> gpioTx.
  * Optional GPIO for a momentary button to trigger log callback (same contract as legacy
  * gateway firmware: only fires when fix is fresh).
  */

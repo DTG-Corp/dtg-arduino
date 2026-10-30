@@ -11,6 +11,15 @@
 namespace
 {
 constexpr uint32_t kBaudCandidates[] = {9600, 38400, 115200, 57600, 19200, 4800};
+
+HardwareSerial &gpsUart()
+{
+#if CONFIG_IDF_TARGET_ESP32 || CONFIG_IDF_TARGET_ESP32S3
+  return Serial2;
+#else
+  return Serial1;
+#endif
+}
 }
 
 uint32_t DtgGps::detectGpsBaud()
@@ -18,17 +27,17 @@ uint32_t DtgGps::detectGpsBaud()
   for (uint32_t baud : kBaudCandidates)
   {
     DTG_LOG("GPS try baud %lu", static_cast<unsigned long>(baud));
-    Serial2.end();
+    gpsUart().end();
     delay(50);
-    Serial2.begin(baud, SERIAL_8N1, rxPin_, txPin_);
+    gpsUart().begin(baud, SERIAL_8N1, rxPin_, txPin_);
 
     const unsigned long start = millis();
     int trialBytes = 0;
     while (millis() - start < 1200)
     {
-      if (Serial2.available() > 0)
+      if (gpsUart().available() > 0)
       {
-        const int c = Serial2.read();
+        const int c = gpsUart().read();
         trialBytes++;
         if (c == '$')
         {
@@ -40,9 +49,9 @@ uint32_t DtgGps::detectGpsBaud()
     (void)trialBytes;
   }
 
-  Serial2.end();
+  gpsUart().end();
   delay(50);
-  Serial2.begin(9600, SERIAL_8N1, rxPin_, txPin_);
+  gpsUart().begin(9600, SERIAL_8N1, rxPin_, txPin_);
   return 9600;
 }
 
@@ -79,8 +88,8 @@ void DtgGps::loop()
   if (!initialized_)
     return;
 
-  while (Serial2.available() > 0)
-    tinyGps_.encode(static_cast<char>(Serial2.read()));
+  while (gpsUart().available() > 0)
+    tinyGps_.encode(static_cast<char>(gpsUart().read()));
 
   const unsigned long now = millis();
   if (!tinyGps_.location.isValid())
