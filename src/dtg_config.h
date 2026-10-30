@@ -198,7 +198,7 @@
 
 // Firmware semver reported on up/info (number1.number2.number3). Override in sketch if needed.
 #ifndef DTG_FIRMWARE_VERSION
-#define DTG_FIRMWARE_VERSION "1.1.0"
+#define DTG_FIRMWARE_VERSION "1.1.1"
 #endif
 
 // tele/snap heartbeat interval (ms) before jitter.

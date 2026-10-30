@@ -6,7 +6,7 @@ Supports **Wi-Fi** and **SIMcom A7680C-class** cellular (PPP), plus **BN-880** G
 
 | | |
 |---|---|
-| **Version** | 1.1.0 (`library.properties`) |
+| **Version** | 1.1.1 (`library.properties`) |
 | **Architectures** | `esp32` |
 | **License** | MIT |
 
@@ -41,11 +41,13 @@ Supports **Wi-Fi** and **SIMcom A7680C-class** cellular (PPP), plus **BN-880** G
 
 ### Arduino IDE
 
-Public repo: [DTG-Corp/dtg-arduino](https://github.com/DTG-Corp/dtg-arduino) (Library Manager submission after `v1.1.0`).
+Public repo: [DTG-Corp/dtg-arduino](https://github.com/DTG-Corp/dtg-arduino). After the Library Manager registry PR merges, search **DTG IoT**.
 
-1. Zip this `dtg` folder so that `library.properties` is at the **root** of the zip.
+Until then (or as a fallback):
+
+1. Zip this folder so that `library.properties` is at the **root** of the zip.
 2. **Sketch → Include Library → Add .ZIP Library...**
-3. Install the dependencies above from **Library Manager**.
+3. Install **PubSubClient**, **ArduinoJson**, and **TinyGPSPlus** from Library Manager. For Modbus examples, install **eModbus** and **AsyncTCP** from GitHub.
 
 Examples appear under **File → Examples → DTG IoT → ESP32 → ...**
 
