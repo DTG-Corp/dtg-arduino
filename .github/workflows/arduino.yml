@@ -52,3 +52,6 @@ jobs:
             - name: ArduinoJson
             - name: TinyGPSPlus
             - source-url: https://github.com/eModbus/eModbus.git
+              destination-name: eModbus
+            - source-url: https://github.com/ESP32Async/AsyncTCP.git
+              destination-name: AsyncTCP
