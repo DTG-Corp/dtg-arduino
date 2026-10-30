@@ -1,0 +1,6 @@
+tests/timer_test
+tests/heap_guard_logic_test
+tests/heap_telemetry_test
+tests/*.exe
+tests/*_test
+!tests/*_test.cpp
